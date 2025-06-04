@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import numpy as np
 
 # Load the sales dataset
@@ -84,11 +84,18 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle
 model_xgb = xgb.XGBRegressor(objective='reg:squarederror', n_estimators=100, learning_rate=0.1, max_depth=5)
 model_xgb.fit(X_train, y_train)
 
-# Make predictions and evaluate the model performance using RMSE
+# Make predictions and evaluate the model performance
 predictions_xgb = model_xgb.predict(X_test)
 rmse_xgb = np.sqrt(mean_squared_error(y_test, predictions_xgb))
+mae_xgb = mean_absolute_error(y_test, predictions_xgb)
+mape_xgb = np.mean(np.abs((y_test - predictions_xgb) / np.maximum(1e-10, y_test))) * 100
+r2_xgb = r2_score(y_test, predictions_xgb)
 
+# Evaluation metrics - RMSE, MAE, MAPE, and R²
 print(f"RMSE: {rmse_xgb:.2f}")
+print(f"MAE: {mae_xgb:.2f}")
+print(f"MAPE: {mape_xgb:.2f}%")
+print(f"R²: {r2_xgb:.4f}")
 
 # Visualize the results by plotting the actual vs predicted sales
 # Get the corresponding dates for the test set
