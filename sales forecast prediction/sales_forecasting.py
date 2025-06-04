@@ -116,6 +116,13 @@ print(f"MAE: {mae_xgb:.2f}")
 print(f"MAPE: {mape_xgb:.2f}%")
 print(f"R²: {r2_xgb:.4f}")
 
+# Visualize feature importance for analysis
+plt.figure(figsize=(10, 6))
+xgb.plot_importance(best_model, max_num_features=10)
+plt.title('Feature Importance')
+plt.tight_layout()
+plt.show()
+
 # Visualize the results by plotting the actual vs predicted sales
 # Get the corresponding dates for the test set
 test_dates = sales_with_lags['Order Date'].iloc[X_test.index]
