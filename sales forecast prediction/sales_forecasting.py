@@ -47,10 +47,10 @@ sales_with_lags = create_lagged_features(data[['Order Date', 'Sales']], lag)
 sales_with_lags = sales_with_lags.dropna()
 sales_with_lags = sales_with_lags.reset_index(drop=True)
 
-# Enhance feature engineering - add calendar features and rolling statistics
-def enhance_feature(data):
+# Enhance feature engineering - add calendar features and rolling statistics, or advanced features
+def enhance_features(data, advanced=True):
     df = data.copy()
-    
+
     # Extract calendar features
     df['dayofweek'] = df['Order Date'].dt.dayofweek
     df['month'] = df['Order Date'].dt.month
@@ -68,12 +68,25 @@ def enhance_feature(data):
     df['rolling_std_7d'] = df['Sales'].rolling(window=7, min_periods=1).std()
     df['rolling_mean_30d'] = df['Sales'].rolling(window=30, min_periods=1).mean()
     
-    # Fill any NaN values created by rolling windows
-    df = df.bfill()
+    # For advanced features
+    if advanced:
+        # Growth rates
+        df['growth_1d'] = df['Sales'].pct_change(1)
+        df['growth_7d'] = df['Sales'].pct_change(7)
+        
+        # Exponential moving averages
+        df['ema_7d'] = df['Sales'].ewm(span=7, min_periods=1).mean()
+        df['ema_14d'] = df['Sales'].ewm(span=14, min_periods=1).mean()
+        
+        # Interaction features
+        df['month_weekend'] = df['month'] * df['is_weekend']
+    
+    # Fill any NaN values
+    df = df.bfill().ffill()
     
     return df
 
-sales_with_features = enhance_feature(sales_with_lags)
+sales_with_features = enhance_features(sales_with_lags, advanced=True)
 
 # Prepare data for training and testing
 X = sales_with_features.drop(columns=['Order Date', 'Sales'])
