@@ -5,6 +5,7 @@ import seaborn as sns
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 import numpy as np
 
 # Load the sales dataset
@@ -80,12 +81,30 @@ y = sales_with_features['Sales']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
-# Train the XGBoost model for sales forecasting
-model_xgb = xgb.XGBRegressor(objective='reg:squarederror', n_estimators=100, learning_rate=0.1, max_depth=5)
-model_xgb.fit(X_train, y_train)
+# Train the XGBoost model for sales forecasting with hyperparameter tuning
+param_grid = {
+    'max_depth': [3, 5, 7],
+    'learning_rate': [0.01, 0.1, 0.2],
+    'n_estimators': [50, 100, 200],
+    'subsample': [0.8, 1.0]
+}
+
+print("Starting hyperparameter tuning...")
+tscv = TimeSeriesSplit(n_splits=5)
+grid_search = GridSearchCV(
+    estimator=xgb.XGBRegressor(objective='reg:squarederror'),
+    param_grid=param_grid,
+    cv=tscv,
+    scoring='neg_root_mean_squared_error',
+    verbose=1
+)
+
+grid_search.fit(X_train, y_train)
+best_model = grid_search.best_estimator_
+print(f"Best parameters: {grid_search.best_params_}")
 
 # Make predictions and evaluate the model performance
-predictions_xgb = model_xgb.predict(X_test)
+predictions_xgb = best_model.predict(X_test)
 rmse_xgb = np.sqrt(mean_squared_error(y_test, predictions_xgb))
 mae_xgb = mean_absolute_error(y_test, predictions_xgb)
 mape_xgb = np.mean(np.abs((y_test - predictions_xgb) / np.maximum(1e-10, y_test))) * 100
