@@ -7,7 +7,8 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.svm import SVC
-from sklearn.metrics import mean_absolute_percentage_error
+from sklearn.metrics import mean_absolute_percentage_error, mean_squared_error, r2_score
+import numpy as np
 
 dataset = pd.read_excel("HousePricePrediction.xlsx")
 
@@ -103,4 +104,31 @@ model_SVR = svm.SVR()
 model_SVR.fit(X_train,Y_train)
 Y_pred = model_SVR.predict(X_valid)
 
-print("Mean Absolute Percentage Error:", mean_absolute_percentage_error(Y_valid, Y_pred))
+# Evaluate the model performance
+mae = mean_absolute_error(Y_valid, Y_pred)
+rmse = np.sqrt(mean_squared_error(Y_valid, Y_pred))
+mape = mean_absolute_percentage_error(Y_valid, Y_pred)
+r2 = r2_score(Y_valid, Y_pred)
+
+# Evaluation metrics - MAE, RMSE, MAPE, and R²
+print(f"Mean Absolute Error: {mae:.2f}")
+print(f"Root Mean Squared Error: {rmse:.2f}")
+print(f"Mean Absolute Percentage Error: {mape:.4f}")
+print(f"R² Score: {r2:.4f}")
+
+# Visualize the results by plotting the actual vs predicted house prices
+plt.figure(figsize=(10, 6))
+plt.scatter(Y_valid, Y_pred, alpha=0.7, label='Predictions')
+plt.plot([Y_valid.min(), Y_valid.max()], [Y_valid.min(), Y_valid.max()], 'r--', 
+        label='Perfect Predictions (Actual = Predicted)')
+
+z = np.polyfit(Y_valid, Y_pred, 1)
+plt.plot(Y_valid, np.poly1d(z)(Y_valid), "b-", 
+        label=f'Trend Line (y={z[0]:.2f}x+{z[1]:.2f})')
+
+plt.xlabel('Actual Price')
+plt.ylabel('Predicted Price')
+plt.title('Actual vs Predicted House Prices')
+plt.legend()
+plt.tight_layout()
+plt.show()
