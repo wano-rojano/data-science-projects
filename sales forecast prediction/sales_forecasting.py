@@ -10,8 +10,12 @@ import numpy as np
 # Load the sales dataset
 file_path = 'train.csv'
 data = pd.read_csv(file_path)
-# Inspect dataset structure and content
-data.head()
+# Explore the dataset
+print("Data shape:", data.shape)
+print("\nData info:")
+print(data.info())
+print("\nData sample:")
+print(data.head())
 
 # Data preprocessing and visualie the sales trend over time
 data['Order Date'] = pd.to_datetime(data['Order Date'], format='%d/%m/%Y')
@@ -42,9 +46,37 @@ sales_with_lags = create_lagged_features(data[['Order Date', 'Sales']], lag)
 sales_with_lags = sales_with_lags.dropna()
 sales_with_lags = sales_with_lags.reset_index(drop=True)
 
+# Enhance feature engineering - add calendar features and rolling statistics
+def enhance_feature(data):
+    df = data.copy()
+    
+    # Extract calendar features
+    df['dayofweek'] = df['Order Date'].dt.dayofweek
+    df['month'] = df['Order Date'].dt.month
+    df['quarter'] = df['Order Date'].dt.quarter
+    df['year'] = df['Order Date'].dt.year
+    
+    # Add day of month
+    df['day'] = df['Order Date'].dt.day
+    
+    # Is weekend feature
+    df['is_weekend'] = df['dayofweek'].apply(lambda x: 1 if x >= 5 else 0)
+    
+    # Add rolling statistics with multiple windows
+    df['rolling_mean_7d'] = df['Sales'].rolling(window=7, min_periods=1).mean()
+    df['rolling_std_7d'] = df['Sales'].rolling(window=7, min_periods=1).std()
+    df['rolling_mean_30d'] = df['Sales'].rolling(window=30, min_periods=1).mean()
+    
+    # Fill any NaN values created by rolling windows
+    df = df.bfill()
+    
+    return df
+
+sales_with_features = enhance_feature(sales_with_lags)
+
 # Prepare data for training and testing
-X = sales_with_lags.drop(columns=['Order Date', 'Sales'])
-y = sales_with_lags['Sales']
+X = sales_with_features.drop(columns=['Order Date', 'Sales'])
+y = sales_with_features['Sales']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
