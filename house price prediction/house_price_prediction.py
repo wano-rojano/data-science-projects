@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.svm import SVC
 from sklearn.metrics import mean_absolute_percentage_error, mean_squared_error, r2_score
+from sklearn.model_selection import GridSearchCV
 import numpy as np
 
 dataset = pd.read_excel("HousePricePrediction.xlsx")
@@ -99,10 +100,29 @@ Y = df_final['SalePrice']
 X_train, X_valid, Y_train, Y_valid = train_test_split(
     X, Y, train_size=0.8, test_size=0.2, random_state=0)
 
-# Model training and accuracy evaluation using Support Vector Machine (SVM)
-model_SVR = svm.SVR()
-model_SVR.fit(X_train,Y_train)
-Y_pred = model_SVR.predict(X_valid)
+# Model training and accuracy evaluation using Support Vector Machine (SVM) with hyperparameter tuning
+param_grid = {
+    'C': [0.1, 1, 10, 100, 1000],
+    'gamma': ['scale', 'auto', 0.1, 0.01, 0.001],
+    'kernel': ['rbf', 'linear', 'poly'],
+    'epsilon': [0.1, 0.2, 0.5]
+}
+
+print("Starting hyperparameter tuning...")
+grid_search = GridSearchCV(
+    svm.SVR(), 
+    param_grid, 
+    cv=5,
+    scoring='neg_mean_absolute_error',
+    verbose=1
+)
+grid_search.fit(X_train, Y_train)
+
+best_model = grid_search.best_estimator_
+print(f"Best parameters: {grid_search.best_params_}")
+
+# Make predictions using the best model
+Y_pred = best_model.predict(X_valid)
 
 # Evaluate the model performance
 mae = mean_absolute_error(Y_valid, Y_pred)
@@ -128,7 +148,15 @@ plt.plot(Y_valid, np.poly1d(z)(Y_valid), "b-",
 
 plt.xlabel('Actual Price')
 plt.ylabel('Predicted Price')
-plt.title('Actual vs Predicted House Prices')
+plt.title('Actual vs Predicted House Prices (Unscaled)')
 plt.legend()
 plt.tight_layout()
+plt.show()
+
+# Residual analysis
+plt.scatter(Y_pred, residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Predicted Values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
 plt.show()
