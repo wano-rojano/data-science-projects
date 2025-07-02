@@ -7,7 +7,8 @@ This portfolio contains various data science projects including machine learning
 - House Price Prediction (Machine Learning)
 - Fake News Detection Model (NLP)
 - Facebook Sentiment Analysis (NLP)
-- [A Predictive Model for Fraudulent Job Listings](https://colab.research.google.com/drive/1UXtZCrRwwQF3j66Deouq7cGGy9WgG_eh?usp=sharing)
+- [A Predictive Model for Fraudulent Job Listings](https://colab.research.google.com/drive/1UXtZCrRwwQF3j66Deouq7cGGy9WgG_eh?usp=sharing) (NLP)
+- [A Predictive Model for Rice Pests and Diseases Occurrence](https://colab.research.google.com/drive/1oBenMVkexYUMHL-fLIctW0KZxHlaFt81?usp=sharing) (Machine Learning)
 
 ## Requirements
 
