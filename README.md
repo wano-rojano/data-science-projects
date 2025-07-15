@@ -1,6 +1,8 @@
 # Data Science Projects Portfolio
 
-This portfolio contains various data science projects including machine learning, time series and forecasting, and natural language processing (NLP).
+This portfolio contains various data science projects including machine learning, time series and forecasting, natural language processing (NLP), and deep learning.
+
+*Developed by Christian Rojano*
 
 ## Features
 - Sales Forecast Prediction (Time Series and Forecasting)
@@ -9,6 +11,7 @@ This portfolio contains various data science projects including machine learning
 - Facebook Sentiment Analysis (NLP)
 - [A Predictive Model for Fraudulent Job Listings](https://colab.research.google.com/drive/1UXtZCrRwwQF3j66Deouq7cGGy9WgG_eh?usp=sharing) (NLP)
 - [A Predictive Model for Rice Pests and Diseases Occurrence](https://colab.research.google.com/drive/1oBenMVkexYUMHL-fLIctW0KZxHlaFt81?usp=sharing) (Machine Learning)
+- [Primary Bone Tumors Classification](https://colab.research.google.com/drive/1rv_sEqE4fcxEiOfTrxKdH3n6O92H0Pfl?usp=sharing) (Deep Learning)
 
 ## Requirements
 
@@ -22,6 +25,9 @@ This portfolio contains various data science projects including machine learning
 - TensorFlow
 - NLTK
 - Imblearn
+- Ultralytics YOLO
+- Supervision
+- OpenCV
 
 ## Setup
 
@@ -50,3 +56,4 @@ python <Python filename>
 - [House Price Prediction using Machine Learning in Python](https://www.geeksforgeeks.org/house-price-prediction-using-machine-learning-in-python)
 - [Fake News Detection Model using TensorFlow in Python](https://www.geeksforgeeks.org/fake-news-detection-model-using-tensorflow-in-python)
 - [Facebook Sentiment Analysis using python](https://www.geeksforgeeks.org/facebook-sentiment-analysis-using-python)
+- [How to Train a YOLOv12 Object Detection Model on a Custom Dataset](https://blog.roboflow.com/train-yolov12-model)
